@@ -1,0 +1,65 @@
+===================EXPRESS=====================
+para poder mostrar un "hola"
+		import express from "express"//lo importamos
+		const app=express()//lo iniciamos 
+		app.get("/",(req,res)=>{
+			res.end("<h1>hola greace</h1>")//lo que imprime
+		})
+		app.listen(3000,()=>
+			console.log("iniciandpo"))//el puerto
+---------manejo de archivos------------
+		import express from "express"//lo importamos
+		const app=express()//lo iniciamos 
+		app.get("/",(req,res)=>{
+			res.end("index.html")//lo que imprime
+		})
+		app.listen(3000,()=>
+			console.log("iniciandpo"))//el puerto	
+----------objeto request y params---------
+lo usamos para usar parametros definidos 
+import express from "express";
+
+const app = express();
+
+// Ruta raíz
+app.get("/", (req, res) => {
+  res.send("Servidor funcionando");//la respuesta 
+});//lee la url
+
+// Ruta /user CON parámetros
+app.get("/user/:id-:name", (req, res) => {
+	res.set({"content-type":"text/html;chaset=utf-8"})
+	//para entar los parametros se pone le b
+  res.end('<h1> req.params.name</h1>');//lo que imprimira 
+});
+
+// Iniciar servidor
+app.listen(3000, () => {
+  console.log("Servidor activo en http://localhost:3000/user/19-greace");//si se activo 
+});
+--------------objeto query-------------------
+se usa para cambiar las parametros
+
+app.get("/user/:id-:name", (req, res) => {
+	res.set({"content-type":"text/html;chaset=utf-8"})
+	//para entar los parametros se pone le b
+  res.end('<h1> req.query .name</h1>');//lo que imprimira 
+});
+-------------objeto response ---------------
+
+set: puedes enviar cuantas veces quieras la informacion
+			res.set({"content-type":"text/html;chaset=utf-8"})//para 
+			res.set('<h1> req.query .name</h1>');//lo que imprimira 
+end:sera el final de lo que enviaremos
+			res.end('<h1> req.query .name</h1>');//lo que imprimira 
+ 
+json:lo cambia a json
+			res.json({name:"greace",edad:21})
+sendFile:envia un archivo
+			res.sendFile(resolve("index.html"))
+render:se usar para usar una plantilla
+			res.render("plantilla")
+redirect:redirecciona a otra url
+			app.get("redirecion", (req, res) => {
+			res.redirect(301,"https://localhost:3000/principal") 
+});
