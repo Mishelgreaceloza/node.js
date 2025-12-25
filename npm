@@ -1,0 +1,25 @@
+=======================NPM =============
+es una herramienta sirve para instalar ,actualizar y administar librerias
+o modulos
+estos paquetes ya tienen una tarrea asi tu ya no la escribes 
+
+es una heramienta en linea paquetes (es un archivo decripto pa)
+modulo
+como se intala un npm ?
+en la terinal de nuestro archivo de pone npm init y te dara un formulario 
+o simplemente -y se creara con valores determinados 
+como se intala un paquete ?
+----------------------node modulos--------
+es donde de guardara todos lo pauqetes que intalemos 
+----------------------package look.jso----
+guarda para todo los sistemos operativos
+----------------------tipos de banderas-----
+hay dos tipos de dependencia 
+despendencias => en la face de hacer   -S 
+devdependencia=> solo face de desarrollo -D
+global=> sera tanto en dev y depedencia -G
+produccion => solo para las se usan en este momento -g
+----------------------npx----------------
+crear npx y crear un package.jso
+ayuda a ejecutar la ultima vercion del paquete 
+npx paquete....
