@@ -24,3 +24,38 @@
 		console.log("Hostname:", parsedUrl.hostname);
 		console.log("Pathname:", parsedUrl.pathname);
 		console.log("Parámetros de consulta:", parsedUrl.query);
+=======================path===============================
+----join sirve para unir rutas
+		import { join } from "path";//importacion 
+
+		const directorio = "/ruta/principal";
+		const archivo = "archivo.txt";
+
+		const rutaCompleta = join(directorio, archivo);//unirlos
+
+		console.log("Ruta completa:", rutaCompleta);//mostrarlos
+----resolve construir ruta absoluta con la nueva ruta
+		desde users....
+		import { resolve } from "path";
+
+		const rutaRelativa = "../carpeta/archivo.txt";
+
+		const rutaAbsoluta = resolve(rutaRelativa);
+
+		console.log("Ruta absoluta:", rutaAbsoluta);
+----extraer
+		basenane=nombre del archivo
+		disname=nombre del directorio
+		extension=nombre del extname
+
+		import { basename, dirname, extname } from "path";
+
+		const ruta = "/ruta/principal/archivo.txt";
+
+		const nombreArchivo = basename(ruta);
+		const nombreDirectorio = dirname(ruta);
+		const extension = extname(ruta);
+
+		console.log("Nombre del archivo:", nombreArchivo);
+		console.log("Nombre del directorio:", nombreDirectorio);
+		console.log("Extensión del archivo:", extension)
