@@ -1,0 +1,63 @@
+/*=================MODULOS=================
+un modulo es cada archivo 
+estos se pueden conectar 
+como??
+
+archivo1 app.js=>	function saludar(nombre){
+					return `hola ${nombre}`}
+					module.exports.saludar=saludar 
+archivo2 saludo.js=> 
+					opcion1=>const saludo=require("./app.js")
+					opcion2=>const saludo=import {calculadora}from"./app.js";//nueva pero no muy entendible
+					console.log(saludo.saludar("greace"));
+tambien se puedo entre varios modulos
+  solo creamos otra funcion y lo expotamos con el module.exports.
+  y listo como esta exporatado se puede llamar del otro archivo 
+  -------------sixtasis de desestructuracion y require----------
+  es para excluir un modulo 
+  en el archivo 2 saludo.js=>const { hola,saludar }=require("./app.js")
+  							//dentro de los parentesis ponemos el modulo o modulos
+  							 que queremos usar 
+							console.log(hola("greace"));
+							console.log(saludar("greace"));
+				
+
+				HAY DOS TIPO			
+----------------modulos principales de node.js------------------
+built-it(incorporados)=> son :http,https,fs(file sytem),os(operating system),path
+MODULO CONSOLE =>Hay dos tipos de console.log :console.warn (para mostar mensajes) 
+y console.error(para errores)
+	console.error(new error("gran erro"));
+MODULO fs =>fs.nename
+						fs.renameSync 
+para LEER el archivo html en node.js 
+	const fs=require(`fs`)
+	fs.readFile('index.html', 'utf-8', (err,contenido)=>{
+		if(err){
+			console.log(err);
+		}
+		else{
+			console.log(contenido);
+		}
+	});
+	como cambiar el nombre de un archivo 
+		fs.rename('index.html','greace.html',(err)=>{
+		if(err){
+			throw err	}
+		
+		console.log('nombre cambiado')})
+	tambien se puede CAMBIAR parates y TODO 
+		fs.appendFile('index.html','<p>mishel</p>', (err)=>{
+			if(err){
+				throw err
+			}
+			console.log("se cambio ")
+		});
+		para todo se pone el writeFile envez de appendFile
+	para eliminar
+			fs.unlink('index.html', (err)=>{
+			if(err){
+				throw err
+			}
+			console.log("se borro  ")
+		   });*/
