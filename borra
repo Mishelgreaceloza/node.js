@@ -1,119 +1,20 @@
-<script type="module">
-  import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+socket.on("historial", (mensajesHistorial) => {
+  mensajes.innerHTML = ""; // limpiamos
 
-  const socket = io();
-  const form=document.getElementById("formulario")
-  const input=document.getElementById("input")
-  const mensajes=document.getElementById("mensaje")
-  const userConectados=document.getElementById("usuarioConetados")
-  const salaSelect = document.getElementById("sala");
-  const btnEntrar = document.getElementById("entrar");
-  const escribiendoP=document.getElementById("escribiendo")
-    
+  mensajesHistorial.forEach((msg) => {
+    const li = document.createElement("li");
 
-  //USUARIO------- como se añade,donde se guarda 
-    let nombre=localStorage.getItem("apodo")// no se bore su nombre del usuario 
-    if(!nombre){
-      nombre=prompt("cual es tu nombre")
-    if(!nombre)nombre= "anonimo"//vacio sera anonimo
-      localStorage.setItem("apodo",nombre)//donde se guarda 
-    }
-    socket.emit("nuevoUsuario",nombre)//socket.emit("unirseSala",salaActual)
+    li.className = msg.nombre === nombre ? "mio" : "otro";
 
-  //SALAS------
-  let salaActual = "general";
-  socket.emit("cambiarSala",{
-    anterior:null,
-    nueva:salaActual
-  })
+    li.innerHTML =
+      msg.nombre === nombre
+        ? `<span class="hora">${msg.hora}</span> ${msg.mensaje}`
+        : `<strong>${msg.nombre}</strong>
+           <span class="hora">${msg.hora}</span><br>
+           ${msg.mensaje}`;
 
-  btnEntrar.addEventListener("click", () => {
-      const nuevaSala = salaSelect.value;
-      socket.emit("cambiarSala",{
-        anterior:salaActual,
-        nueva:nuevaSala});//unirse a la sala
-      salaActual=nuevaSala//cual salir cual entrar
-      mensajes.innerHTML = ""; // limpiamos mensajes al cambiar
+    mensajes.appendChild(li);
   });
 
-  //USUARIOS conectados 
-  socket.on("listaUsuarios",(usuarios)=>{
-    userConectados.innerHTML=""
-    usuarios.forEach((nombre)=>{
-      const li=`<li>º${nombre}</li>`
-      userConectados.insertAdjacentHTML("beforeend",li)
-    }) })//para la los usuarios conectados 
-
-  //MENSAJE---
-  form.addEventListener("submit",(e)=>{
-    e.preventDefault()//evita que la pagina se recargue
-    
-    socket.emit("dejoEscribir",{
-      sala:salaActual
-    })
-
-    if(!input.value.trim()) return
-      socket.emit("chat mensaje",{//laza la pelota al serv
-        mensaje:input.value,
-        sala:salaActual }) 
-      input.value="" //limpia el cuadro para next text
-    })//cuando apretemos el boton enviar
-    //como se envia
-      socket.on("chat mensaje",(msg)=>{
-      const li=document.createElement("li")
-        li.className = msg.nombre === nombre ? "mio" : "otro";
-        li.innerHTML = msg.nombre === nombre
-          ? `<span class="hora">${msg.hora}</span>${msg.mensaje}`
-          :`<strong>${msg.nombre}</strong>: </span class="hora"> ${msg.hora}</span><br>
-          ${msg.mensaje}`;
-        mensajes.appendChild(li);
-      });
-  //escribiendo.....
-  let estaEscribiendo=false
-  let timeoutEscribiendo
-
-  input.addEventListener("input",()=>{
-    if(!escribiendo){
-      estaEscribiendo=true
-      socket.emit("escribiendo",{
-        sala:salaActual
-      })
-    }
-    clearTimeout(timeoutEscribiendo);
-
-    timeoutEscribiendo=setTimeout(()=>{
-      estaEscribiendo=false
-      socket.emit("dejoDeEscribir",{
-        sala:salaActual
-      })
-    },1000);
-  })  
-
-  socket.on("escribiendo", (msg) => {
-  if (msg.nombre !== nombre) {
-    escribiendoP.textContent = `${data.nombre} está escribiendo...`;
-  }
+  mensajes.scrollTop = mensajes.scrollHeight;
 });
-
-socket.on("dejoDeEscribir", () => {
-  escribiendoP.textContent = "";
-});
-
-
-
-
-  
-</script>
-
-
-//escribiendo..
-
-  	socket.on("escribiendo", ({ sala }) => {
-  	socket.to(sala).emit("escribiendo", { nombre });
-	});
-
-	socket.on("dejoDeEscribir", ({ sala }) => {
-  	socket.to(sala).emit("dejoDeEscribir");
-	});
-
-
