@@ -1,18 +1,4 @@
-<script type="module">
-  import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
-
-  const socket = io();
-  const form=document.getElementById("formulario")
-  const input=document.getElementById("input")
-  const mensajes=document.getElementById("mensaje")
-  const userConectados=document.getElementById("usuarioConetados")
-  const salaSelect = document.getElementById("sala");
-  const btnEntrar = document.getElementById("entrar");
-  const escribiendoP=document.getElementById("escribiendo")
-  const tituloChat=document.getElementById("tituloChat")
-
-
-  //USUARIO-------------------------------------- como se añade,donde se guarda 
+//USUARIO-------------------------------------- como se añade,donde se guarda 
     let nombre=localStorage.getItem("apodo")// no se bore su nombre del usuario 
     if(!nombre){
       nombre=prompt("cual es tu nombre")
@@ -51,11 +37,13 @@
     li.addEventListener("click", () => {
       chatPrivadoCon = u;
 
+      const salaPrivada=[nombre,u].sort().join("-")
+        salaActual=salaPrivada
+      console.log("entro a sala ",salaPrivada);
       socket.emit("entrarPrivado",{
         conmigo:nombre,
         con:u
       })
-      const salaPrivada = [nombre, u].sort().join("-");
       mensajes.innerHTML = "";
       tituloChat.textContent = `Chat con ${u}`;
     });
@@ -145,7 +133,30 @@ socket.on("dejoDeEscribir", () => {
 
 
 
+import express from "express"
+import path from "path"//para
+import {fileURLToPath} from "url"//para la url
+import {createServer}from "node:http"//crea servidores http
+import {Server} from "socket.io"//tiempo real
 
+const port=process.env.PORT ?? 3000;
+const app=express()//servidor sin http
+const server=createServer(app)//creamos el servidor http
+const io=new Server(server,{connectionStateRecovery:{}})//nuevo servidor http y express
+
+const usuarios={}//en aca se guarda los usuarios 
+
+const __filename=fileURLToPath(import.meta.url);//url para el index
+const __dirname=path.dirname(__filename);//url para el index
+app.use(express.static(path.join(__dirname,"../cliente")))//url para el index
+
+const historial={}
+const LIMITE_MENSAJES =50
+
+
+app.get("/",(req,res)=>{
+	res.sendFile(path.join(__dirname,"..","cliente","index.html"))
+	})//obtiene la ruta y muestra el index.html
 
 
 io.on("connection",(socket)=>{
@@ -220,11 +231,11 @@ io.on("connection",(socket)=>{
 	socket.on("entrarPrivado",({conmigo,con})=>{
 		const salaPrivada=[conmigo,con].sort().join("-")
 		//elsort los ordena y join los junta a conmigo y a con
-		socket.join(sala)//crea una nueva sal 
+		socket.join(salaPrivada)//crea una nueva sal 
 
 		console.log("sala privada ", salaPrivada);
-		if(historial[sala]){
-			socket.emit("historial",historial[sala])
+		if(historial[salaPrivada]){
+			socket.emit("historial",historial[salaPrivada])
 		}
 
 	})
@@ -241,5 +252,7 @@ io.on("connection",(socket)=>{
 server.listen(port,()=>{
 	console.log("coriendo");
 })
+
+
 
 
