@@ -1,12 +1,245 @@
-li.addEventListener("click", () => {
-  const salaPrivada = [nombre, u].sort().join("-");
+<script type="module">
+  import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
 
-  socket.emit("cambiarSala", {
-    anterior: salaActual,
-    nueva: salaPrivada
+  const socket = io();
+  const form=document.getElementById("formulario")
+  const input=document.getElementById("input")
+  const mensajes=document.getElementById("mensaje")
+  const userConectados=document.getElementById("usuarioConetados")
+  const salaSelect = document.getElementById("sala");
+  const btnEntrar = document.getElementById("entrar");
+  const escribiendoP=document.getElementById("escribiendo")
+  const tituloChat=document.getElementById("tituloChat")
+
+
+  //USUARIO-------------------------------------- como se añade,donde se guarda 
+    let nombre=localStorage.getItem("apodo")// no se bore su nombre del usuario 
+    if(!nombre){
+      nombre=prompt("cual es tu nombre")
+    if(!nombre)nombre= "anonimo"//vacio sera anonimo
+      localStorage.setItem("apodo",nombre)//donde se guarda 
+    }
+    socket.emit("nuevoUsuario",nombre)//socket.emit("unirseSala",salaActual)
+
+  //SALAS----------------------------------------------------
+  let salaActual = "general";
+  socket.emit("cambiarSala",{
+    anterior:null,
+    nueva:salaActual
+  })
+
+  btnEntrar.addEventListener("click", () => {
+      const nuevaSala = salaSelect.value;
+      socket.emit("cambiarSala",{
+        anterior:salaActual,
+        nueva:nuevaSala});//unirse a la sala
+      salaActual=nuevaSala//cual salir cual entrar
+      mensajes.innerHTML = ""; // limpiamos mensajes al cambiar
   });
 
-  salaActual = salaPrivada;
-  mensajes.innerHTML = "";
-  tituloChat.textContent = `Chat con ${u}`;
+  //USUARIOS conectados ---------------------------------------
+  socket.on("listaUsuarios",(usuarios)=>{
+    userConectados.innerHTML=""
+    usuarios.forEach((u)=>{
+      
+      if (u === nombre) return;
+
+    const li = document.createElement("li");
+    li.textContent = u;
+    li.style.cursor = "pointer";
+
+    li.addEventListener("click", () => {
+      chatPrivadoCon = u;
+
+      socket.emit("entrarPrivado",{
+        conmigo:nombre,
+        con:u
+      })
+      const salaPrivada = [nombre, u].sort().join("-");
+      mensajes.innerHTML = "";
+      tituloChat.textContent = `Chat con ${u}`;
+    });
+
+    userConectados.appendChild(li);
+      
+    }) })//para la los usuarios conectados 
+
+  //HISTORIAL-------------------------------------
+  socket.on("historial", (mensajesHistorial) => {
+  mensajes.innerHTML = ""; // limpiamos
+
+  mensajesHistorial.forEach((msg) => {
+    const li = document.createElement("li");
+
+    li.className = msg.nombre === nombre ? "mio" : "otro";
+
+    li.innerHTML =
+      msg.nombre === nombre
+        ? `<span class="hora">${msg.hora}</span> ${msg.mensaje}`
+        : `<strong>${msg.nombre}</strong>
+           <span class="hora">${msg.hora}</span><br>
+           ${msg.mensaje}`;
+
+    mensajes.appendChild(li);
+  });
+    mensajes.scrollTop = mensajes.scrollHeight;
+  });
+
+  //MENSAJE----------------------------------------
+  form.addEventListener("submit",(e)=>{
+    e.preventDefault()//evita que la pagina se r0..0.
+    
+    socket.emit("dejoDeEscribir",{
+      sala:salaActual
+    })
+
+    if(!input.value.trim()) return
+      socket.emit("chat mensaje",{//laza la pelota al serv
+        mensaje:input.value,
+        sala:salaActual }) 
+      input.value="" //limpia el cuadro para next text
+    })//cuando apretemos el boton enviar
+    //como se envia
+      socket.on("chat mensaje",(msg)=>{
+      const li=document.createElement("li")
+        li.className = msg.nombre === nombre ? "mio" : "otro";
+        li.innerHTML = msg.nombre === nombre
+          ? `<span class="hora">${msg.hora}</span>${msg.mensaje}`
+          :`<strong>${msg.nombre}</strong>: </span class="hora"> ${msg.hora}</span><br>
+          ${msg.mensaje}`;
+        mensajes.appendChild(li);
+      });
+  //escribiendo.....
+  let estaEscribiendo=false
+  let timeoutEscribiendo
+
+  input.addEventListener("input",()=>{
+    if(!estaEscribiendo){
+      estaEscribiendo=true
+      socket.emit("escribiendo",{
+        sala:salaActual
+      })
+    }
+    clearTimeout(timeoutEscribiendo);
+
+    timeoutEscribiendo=setTimeout(()=>{
+      estaEscribiendo=false
+      socket.emit("dejoDeEscribir",{
+        sala:salaActual
+      })
+    },1000);
+  })  
+
+  socket.on("escribiendo", (msg) => {
+  if (msg.nombre !== nombre) {
+    escribiendoP.textContent = `${msg.nombre} está escribiendo...`;
+  }
 });
+
+socket.on("dejoDeEscribir", () => {
+  escribiendoP.textContent = "";
+});
+  
+</script>
+
+
+
+
+
+
+
+io.on("connection",(socket)=>{
+
+	//ENTRA a la sala general----
+	socket.join("general")
+	console.log("se conecto usuario ",socket.id)//cada que alguien abre la pagina
+	
+	//usuario se CONECTA----
+	socket.on("nuevoUsuario",(nombre)=>{
+			usuarios[socket.id]=nombre//es donde el usuario y su id se conectan 
+			console.log("usuarios conectados",usuarios);
+			io.emit("listaUsuarios",Object.values(usuarios))//lista de conectados 
+		})
+
+	//entrar y salir de una SALA-----
+	socket.on("cambiarSala", ({anterior,nueva}) => {
+    	if(anterior) {socket.leave(anterior)}//LEAVE sale de la sala
+    	socket.join(nueva);//JOIN agrupa los usuarios a  la nueva sala 
+    	console.log(`Usuario ${usuarios[socket.id]} salio ${anterior} entró a ${nueva}`);
+  		
+  		//enviamos el historial al que entra 
+  		if(historial[nueva]){
+  			socket.emit("historial",historial[nueva])
+  		}
+  	});
+
+	//envia los MENSAJES------
+  	socket.on("chat mensaje", (msg) => {
+  		if(!msg?.mensaje|| !msg.sala) return//evita que caiga
+  		const ahora = new Date()
+  		const mensajeCompleto={
+  			sala:msg.sala,
+  			nombre:usuarios[socket.id],
+  			mensaje:msg.mensaje,
+  			hora: ahora.toLocaleTimeString([],{
+  				hour:"2-digit",
+  				minute:"2-digit"
+  			})
+  		}
+
+  		//------HISTORIAL si la sala no existe la creamos 
+  		
+  		if(!historial[msg.sala]){
+  			historial[msg.sala]=[]
+  		}
+  		//guarmos el mensaje 
+  		historial[msg.sala].push(mensajeCompleto)
+
+  		//limitamos el historial 
+  		if (historial[msg.sala].length >LIMITE_MENSAJES) {
+  			historial[msg.sala].shift()
+  		}
+
+  		console.log("mensaje es",mensajeCompleto);
+    	io.to(msg.sala).emit("chat mensaje",  	mensajeCompleto)
+    	//io.to solo los que estan unido a la sala ;
+  	});
+
+  	//escribiendo..
+
+  	socket.on("escribiendo", ({ sala }) => {
+  	socket.to(sala).emit("escribiendo", { nombre:usuarios[socket.id]});
+	});
+
+	socket.on("dejoDeEscribir", ({ sala }) => {
+  	socket.to(sala).emit("dejoDeEscribir");
+	});
+
+//chat privado  
+
+	socket.on("entrarPrivado",({conmigo,con})=>{
+		const salaPrivada=[conmigo,con].sort().join("-")
+		//elsort los ordena y join los junta a conmigo y a con
+		socket.join(sala)//crea una nueva sal 
+
+		console.log("sala privada ", salaPrivada);
+		if(historial[sala]){
+			socket.emit("historial",historial[sala])
+		}
+
+	})
+
+	//cuando se DESCONECTA-----
+	socket.on("disconnect",()=>{
+		console.log("usuario salio",usuarios[socket.id])
+		delete usuarios[socket.id];
+		io.emit("listaUsuarios",Object.values(usuarios))
+	})//cuando el usuario se desconcta 
+
+})
+
+server.listen(port,()=>{
+	console.log("coriendo");
+})
+
+
