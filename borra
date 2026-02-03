@@ -1,275 +1,55 @@
-import express from "express"
-import path from "path"//para
-import {fileURLToPath} from "url"//para la url
-import {createServer}from "node:http"//crea servidores http
-import {Server} from "socket.io"//tiempo real
+/* contenedor general */
+.mensaje {
+  max-width: 70%;
+  margin: 6px 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  position: relative;
+}
 
-const port=process.env.PORT ?? 3000;
-const app=express()//servidor sin http
-const server=createServer(app)//creamos el servidor http
-const io=new Server(server,{connectionStateRecovery:{}})//nuevo servidor http y express
+/* mensajes propios */
+.mensaje.mio {
+  margin-left: auto;
+  background-color: #dcf8c6;
+  text-align: right;
+}
 
-const usuarios={}//en aca se guarda los usuarios 
+/* mensajes de otros */
+.mensaje.otro {
+  margin-right: auto;
+  background-color: #ffffff;
+}
 
-const __filename=fileURLToPath(import.meta.url);//url para el index
-const __dirname=path.dirname(__filename);//url para el index
-app.use(express.static(path.join(__dirname,"../cliente")))//url para el index
+/* nombre del usuario */
+.nombre-usuario {
+  display: block;
+  font-weight: bold;
+  color: #6a0dad;
+  cursor: pointer;
+  margin-bottom: 3px;
+}
 
-const historial={}
-const LIMITE_MENSAJES =50
+.nombre-usuario:hover {
+  text-decoration: underline;
+}
 
+/* texto del mensaje */
+.texto-mensaje {
+  display: block;
+  margin-bottom: 2px;
+}
 
-app.get("/",(req,res)=>{
-	res.sendFile(path.join(__dirname,"..","cliente","index.html"))
-	})//obtiene la ruta y muestra el index.html
+/* hora */
+.hora {
+  font-size: 11px;
+  color: gray;
+  position: absolute;
+  bottom: 4px;
+  right: 8px;
+}
 
-
-io.on("connection",(socket)=>{
-
-	//ENTRA a la sala general----
-	socket.join("general")
-	console.log("se conecto usuario ",socket.id)//cada que alguien abre la pagina
-	
-	//usuario se CONECTA----
-	socket.on("nuevoUsuario",(nombre)=>{
-			usuarios[socket.id]=nombre//es donde el usuario y su id se conectan 
-			console.log("usuarios conectados",usuarios);
-			io.emit("listaUsuarios",Object.values(usuarios))//lista de conectados 
-		})
-
-	//entrar y salir de una SALA-----
-	socket.on("cambiarSala", ({anterior,nueva}) => {
-    	if(anterior) {socket.leave(anterior)}//LEAVE sale de la sala
-    	socket.join(nueva);//JOIN agrupa los usuarios a  la nueva sala 
-    	console.log(`Usuario ${usuarios[socket.id]} salio ${anterior} entró a ${nueva}`);
-  		
-  		//enviamos el historial al que entra 
-  		if(historial[nueva]){
-  			socket.emit("historial",historial[nueva])
-  		}
-  	});
-
-	//envia los MENSAJES------
-  	socket.on("chat mensaje", (msg) => {
-  		if(!msg?.mensaje|| !msg.sala) return//evita que caiga
-  		const ahora = new Date()
-  		const mensajeCompleto={
-  			sala:msg.sala,
-  			nombre:usuarios[socket.id],
-  			mensaje:msg.mensaje,
-  			hora: ahora.toLocaleTimeString([],{
-  				hour:"2-digit",
-  				minute:"2-digit"
-  			})
-  		}
-
-  		//------HISTORIAL si la sala no existe la creamos 
-  		
-  		if(!historial[msg.sala]){
-  			historial[msg.sala]=[]
-  		}
-  		//guarmos el mensaje 
-  		historial[msg.sala].push(mensajeCompleto)
-
-  		//limitamos el historial 
-  		if (historial[msg.sala].length >LIMITE_MENSAJES) {
-  			historial[msg.sala].shift()
-  		}
-
-  		console.log("mensaje es",mensajeCompleto);
-    	io.to(msg.sala).emit("chat mensaje",  	mensajeCompleto)
-    	//io.to solo los que estan unido a la sala ;
-  	});
-
-  	//escribiendo..
-
-  	socket.on("escribiendo", ({ sala }) => {
-  	socket.to(sala).emit("escribiendo", { nombre:usuarios[socket.id]});
-	});
-
-	socket.on("dejoDeEscribir", ({ sala }) => {
-  	socket.to(sala).emit("dejoDeEscribir");
-	});
-
-//chat privado  
-
-	socket.on("entrarPrivado",({conmigo,con})=>{
-		const salaPrivada=[conmigo,con].sort().join("-")
-		//elsort los ordena y join los junta a conmigo y a con
-		socket.join(salaPrivada)//crea una nueva sal 
-
-		console.log("sala privada ", salaPrivada);
-		if(historial[salaPrivada]){
-			socket.emit("historial",historial[salaPrivada])
-		}
-
-	})
-
-	//cuando se DESCONECTA---b--
-	socket.on("disconnect",()=>{
-		console.log("usuario salio",usuarios[socket.id])
-		delete usuarios[socket.id];
-		io.emit("listaUsuarios",Object.values(usuarios))
-	})//cuando el usuario se desconcta 
-
-})
-
-server.listen(port,()=>{
-	console.log("coriendo");
-})
-
-
-
-
-<script type="module">
-  import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
-
-  const socket = io();
-  const form=document.getElementById("formulario")
-  const input=document.getElementById("input")
-  const mensajes=document.getElementById("mensaje")
-  const userConectados=document.getElementById("usuarioConetados")
-  const salaSelect = document.getElementById("sala");
-  const btnEntrar = document.getElementById("entrar");
-  const escribiendoP=document.getElementById("escribiendo")
-  const tituloChat=document.getElementById("tituloChat")
-
-
-  //USUARIO-------------------------------------- como se añade,donde se guarda 
-    let nombre=localStorage.getItem("apodo")// no se bore su nombre del usuario 
-    if(!nombre){
-      nombre=prompt("cual es tu nombre")
-    if(!nombre)nombre= "anonimo"//vacio sera anonimo
-      localStorage.setItem("apodo",nombre)//donde se guarda 
-    }
-    socket.emit("nuevoUsuario",nombre)//socket.emit("unirseSala",salaActual)
-
-  //SALAS----------------------------------------------------
-  let salaActual = "general";
-  socket.emit("cambiarSala",{
-    anterior:null,
-    nueva:salaActual
-  })
-
-  btnEntrar.addEventListener("click", () => {
-      const nuevaSala = salaSelect.value;
-      socket.emit("cambiarSala",{
-        anterior:salaActual,
-        nueva:nuevaSala});//unirse a la sala
-      salaActual=nuevaSala//cual salir cual entrar
-      mensajes.innerHTML = ""; // limpiamos mensajes al cambiar
-  });
-
-  //USUARIOS conectados ---------------------------------------
-  socket.on("listaUsuarios",(usuarios)=>{
-    userConectados.innerHTML=""
-    usuarios.forEach((u)=>{
-      
-      if (u === nombre) return;
-
-    const li = document.createElement("li");
-    li.textContent = u;
-    li.style.cursor = "pointer";
-
-    li.addEventListener("click", () => {
-      chatPrivadoCon = u;
-
-      const salaPrivada=[nombre,u].sort().join("-")
-        salaActual=salaPrivada
-      console.log("click en usuario",u);
-      console.log("cambio de sala",salaActual,"a",salaPrivada);
-      socket.emit("cambiarSala",{
-        anterior:salaActual,
-        nueva:salaPrivada
-      })
-
-      socket.emit("entrarPrivado",{
-        conmigo:nombre,
-        con:u
-      })
-      salaActual=salaPrivada
-      mensajes.innerHTML = "";
-      tituloChat.textContent = `Chat con ${u}`;
-    });
-
-    userConectados.appendChild(li);
-      
-    }) })//para la los usuarios conectados 
-
-  //HISTORIAL-------------------------------------
-  socket.on("historial", (mensajesHistorial) => {
-  mensajes.innerHTML = ""; // limpiamos
-
-  mensajesHistorial.forEach((msg) => {
-    const li = document.createElement("li");
-
-    li.className = msg.nombre === nombre ? "mio" : "otro";
-
-    li.innerHTML =
-      msg.nombre === nombre
-        ? `<span class="hora">${msg.hora}</span> ${msg.mensaje}`
-        : `<strong>${msg.nombre}</strong>
-           <span class="hora">${msg.hora}</span><br>
-           ${msg.mensaje}`;
-
-    mensajes.appendChild(li);
-  });
-    mensajes.scrollTop = mensajes.scrollHeight;
-  });
-
-  //MENSAJE----------------------------------------
-  form.addEventListener("submit",(e)=>{
-    e.preventDefault()//evita que la pagina se r0..0.
-    
-    socket.emit("dejoDeEscribir",{
-      sala:salaActual
-    })
-
-    if(!input.value.trim()) return
-      socket.emit("chat mensaje",{//laza la pelota al serv
-        mensaje:input.value,
-        sala:salaActual }) 
-      input.value="" //limpia el cuadro para next text
-    })//cuando apretemos el boton enviar
-    //como se envia
-      socket.on("chat mensaje",(msg)=>{
-      const li=document.createElement("li")
-        li.className = msg.nombre === nombre ? "mio" : "otro";
-        li.innerHTML = msg.nombre === nombre
-          ? `<span class="hora">${msg.hora}</span>${msg.mensaje}`
-          :`<strong>${msg.nombre}</strong>: </span class="hora"> ${msg.hora}</span><br>
-          ${msg.mensaje}`;
-        mensajes.appendChild(li);
-      });
-  //escribiendo.....
-  let estaEscribiendo=false
-  let timeoutEscribiendo
-
-  input.addEventListener("input",()=>{
-    if(!estaEscribiendo){
-      estaEscribiendo=true
-      socket.emit("escribiendo",{
-        sala:salaActual
-      })
-    }
-    clearTimeout(timeoutEscribiendo);
-
-    timeoutEscribiendo=setTimeout(()=>{
-      estaEscribiendo=false
-      socket.emit("dejoDeEscribir",{
-        sala:salaActual
-      })
-    },1000);
-  })  
-
-  socket.on("escribiendo", (msg) => {
-  if (msg.nombre !== nombre) {
-    escribiendoP.textContent = `${msg.nombre} está escribiendo...`;
-  }
-});
-
-socket.on("dejoDeEscribir", () => {
-  escribiendoP.textContent = "";
-});
-  
-</script>
+/* chat privado visual (opcional) */
+.chat-privado .mensaje {
+  background-color: #f3e8ff;
+}
