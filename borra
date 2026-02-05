@@ -1,10 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>mi chat</title>
-	
 <style>
   #mensaje {
     list-style: none;
@@ -34,6 +27,10 @@
     font-size: 0.75em;
     color: #666;
     margin-left: 6px ;
+  }
+  .mensaje{
+    margin: 6px 0;
+    padding: 8px 12px;
   }
   </style>
 </head>
@@ -83,6 +80,7 @@
     if(!nombre)nombre= "anonimo"//vacio sera anonimo
       localStorage.setItem("apodo",nombre)//donde se guarda 
     }
+    socket.on("connect",()=>{
     socket.emit("nuevoUsuario",nombre)//socket.emit("unirseSala",salaActual)
 
 //SALAS----------------------------------------------------
@@ -91,7 +89,7 @@
     anterior:null,
     nueva:salaActual
   })
-
+  })
   btnEntrar.addEventListener("click", () => {
       const nuevaSala = salaSelect.value;
       socket.emit("cambiarSala",{
@@ -101,7 +99,8 @@
       mensajes.innerHTML = ""; // limpiamos mensajes al cambiar
   });
 
-//USUARIOS conectados ---------------------------------------
+//US
+  UARIOS conectados ---------------------------------------
   socket.on("listaUsuarios",(usuarios)=>{
     userConectados.innerHTML=""
     usuarios.forEach((u)=>{
@@ -120,10 +119,10 @@
         
       console.log("click en usuario",u);
       console.log("cambio de sala",salaActual,"a",salaPrivada);
-      socket.emit("cambiarSala",{
+     /* socket.emit("cambiarSala",{
         anterior:salaActual,
         nueva:salaPrivada
-      })
+      })*/
 
       socket.emit("entrarPrivado",{
         conmigo:nombre,
@@ -134,7 +133,8 @@
       tituloChat.textContent = `Chat con ${u}`;
     });
 
-    userConectados.appendChild(li);
+    userConectados.ap
+    pendChild(li);
       
     }) })//para la los usuarios conectados 
 
@@ -375,8 +375,6 @@ io.on("connection",(socket)=>{
 server.listen(port,()=>{
 	console.log("coriendo");
 })
-
-
 
 
 
