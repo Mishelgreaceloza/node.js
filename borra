@@ -1,3 +1,10 @@
+!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>mi chat</title>
+	
 <style>
   #mensaje {
     list-style: none;
@@ -80,11 +87,13 @@
     if(!nombre)nombre= "anonimo"//vacio sera anonimo
       localStorage.setItem("apodo",nombre)//donde se guarda 
     }
+
+    let salaActual = "general";
     socket.on("connect",()=>{
     socket.emit("nuevoUsuario",nombre)//socket.emit("unirseSala",salaActual)
 
 //SALAS----------------------------------------------------
-  let salaActual = "general";
+  
   socket.emit("cambiarSala",{
     anterior:null,
     nueva:salaActual
@@ -99,8 +108,7 @@
       mensajes.innerHTML = ""; // limpiamos mensajes al cambiar
   });
 
-//US
-  UARIOS conectados ---------------------------------------
+//USUARIOS conectados ---------------------------------------
   socket.on("listaUsuarios",(usuarios)=>{
     userConectados.innerHTML=""
     usuarios.forEach((u)=>{
@@ -133,8 +141,7 @@
       tituloChat.textContent = `Chat con ${u}`;
     });
 
-    userConectados.ap
-    pendChild(li);
+    userConectados.appendChild(li);
       
     }) })//para la los usuarios conectados 
 
@@ -190,6 +197,10 @@
             nombreSpan.textContent=msg.nombre
             nombreSpan.addEventListener("click",(){
               const salaPrivada=[nombre,msg.nombre].sort().join("-")
+              socket.emit("cambiarSala"){
+                anterior:salaActual,
+                nueva:salaPrivada
+              }
               socket.emit("entrarPrivado",{
                 conmigo:nombre,
                 con:msg.nombre
@@ -289,7 +300,7 @@ app.get("/",(req,res)=>{
 io.on("connection",(socket)=>{
 
 //ENTRA a la sala general----------------------------------------
-		socket.join("general")
+		//socket.join("general")
 		console.log("se conecto usuario ",socket.id)//cada que alguien abre la pagina
 	
 //usuario se CONECTA---------------------------------------------
