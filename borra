@@ -94,7 +94,7 @@ io.on("connection",(socket)=>{
 //chat 
 
 	socket.on("entrarPrivado",({conmigo,con})=>{
-		const sala=[conmigo,con].sort(),join("-")
+		const sala=[conmigo,con].sort().join("-")
 		socket.join(sala)
 
 		if(historial[sala]{
@@ -212,11 +212,11 @@ server.listen(port,()=>{
       localStorage.setItem("apodo",nombre)//donde se guarda 
     }
 
-    //let salaActual = "general";
+    let salaActual = "general";
     socket.on("connect",()=>{
     socket.emit("nuevoUsuario",nombre)//socket.emit("unirseSala",salaActual)
-  }
-/*//SALAS----------------------------------------------------
+
+//SALAS----------------------------------------------------
   
   socket.emit("cambiarSala",{
     anterior:null,
@@ -254,7 +254,7 @@ server.listen(port,()=>{
      /* socket.emit("cambiarSala",{
         anterior:salaActual,
         nueva:salaPrivada
-      })------------------/*
+      })*/
 
       socket.emit("entrarPrivado",{
         conmigo:nombre,
@@ -318,13 +318,13 @@ server.listen(port,()=>{
           if(msg.nombre!==nombre){
             const nombreSpan=document.createElement("span")
             nombreSpan.classList.add("nombre-usuario")
-            nombreSpan.textContent=msg.nombre+""
+            nombreSpan.textContent=msg.nombre
             nombreSpan.addEventListener("click",(){
               const salaPrivada=[nombre,msg.nombre].sort().join("-")
-              socket.emit("cambiarSala",{
+              socket.emit("cambiarSala"){
                 anterior:salaActual,
                 nueva:salaPrivada
-              })
+              }
               socket.emit("entrarPrivado",{
                 conmigo:nombre,
                 con:msg.nombre
@@ -385,7 +385,7 @@ server.listen(port,()=>{
 
 socket.on("dejoDeEscribir", () => {
   escribiendoP.textContent = "";
-});*/
+});
   
 </script>
 
