@@ -1,3 +1,57 @@
+import express from "express"
+import path from "path"//para
+import {fileURLToPath} from "url"//para la url
+import {createServer}from "node:http"//crea servidores http
+import {Server} from "socket.io"//tiempo real
+
+const port=process.env.PORT ?? 3000;
+const app=express()//servidor sin http
+const server=createServer(app)//creamos el servidor http
+const io=new Server(server,{connectionStateRecovery:{}})//nuevo servidor http y express
+
+const usuarios={}//en aca se guarda los usuarios 
+
+const __filename=fileURLToPath(import.meta.url);//url para el index
+const __dirname=path.dirname(__filename);//url para el index
+app.use(express.static(path.join(__dirname,"../cliente")))//url para el index
+
+const historial={}
+const LIMITE_MENSAJES =50
+
+
+app.get("/",(req,res)=>{
+	res.sendFile(path.join(__dirname,"..","cliente","index.html"))
+	})//obtiene la ruta y muestra el index.html
+
+
+io.on("connection",(socket)=>{
+
+	//ENTRA a la sala general----
+	//socket.join("general")
+	console.log("se conecto usuario ",socket.id)//cada que alguien abre la pagina
+	
+	//usuario se CONECTA----
+	socket.on("nuevoUsuario",(nombre)=>{
+			usuarios[socket.id]=nombre//es donde el usuario y su id se conectan 
+			console.log("usuarios conectados",usuarios);
+			io.emit("listaUsuarios",Object.values(usuarios))//lista de conectados 
+		})
+
+	//entrar y salir de una SALA-----
+	socket.on("cambiarSala", ({anterior,nueva}) => {
+    	if(anterior) {socket.leave(anterior)}//LEAVE sale de la sala
+    	socket.join(nueva);//JOIN agrupa los usuarios a  la nueva sala 
+    	console.log(`Usuario ${usuarios[socket.id]} salio ${anterior} entró a ${nueva}`);
+  		
+  		//enviamos el historial al que entra 
+  		if(historial[nueva]){
+  			socket.emit("historial",historial[nueva])
+  		}
+  	});
+
+
+
+
 <body>
 	<section id="chat">
     <div class="salas">
@@ -63,44 +117,22 @@
     const li = document.createElement("li");
     li.textContent = u;
     li.style.cursor = "pointer";
+    userConectados.appendChild(li)
+    })
+    })
 
-
-
-import express from "express"
-import path from "path"//para
-import {fileURLToPath} from "url"//para la url
-import {createServer}from "node:http"//crea servidores http
-import {Server} from "socket.io"//tiempo real
-
-const port=process.env.PORT ?? 3000;
-const app=express()//servidor sin http
-const server=createServer(app)//creamos el servidor http
-const io=new Server(server,{connectionStateRecovery:{}})//nuevo servidor http y express
-
-const usuarios={}//en aca se guarda los usuarios 
-
-const __filename=fileURLToPath(import.meta.url);//url para el index
-const __dirname=path.dirname(__filename);//url para el index
-app.use(express.static(path.join(__dirname,"../cliente")))//url para el index
-
-const historial={}
-const LIMITE_MENSAJES =50
-
-
-app.get("/",(req,res)=>{
-	res.sendFile(path.join(__dirname,"..","cliente","index.html"))
-	})//obtiene la ruta y muestra el index.html
-
-
-io.on("connection",(socket)=>{
-
-	//ENTRA a la sala general----
-	//socket.join("general")
-	console.log("se conecto usuario ",socket.id)//cada que alguien abre la pagina
-	
-	//usuario se CONECTA----
-	socket.on("nuevoUsuario",(nombre)=>{
-			usuarios[socket.id]=nombre//es donde el usuario y su id se conectan 
-			console.log("usuarios conectados",usuarios);
-			io.emit("listaUsuarios",Object.values(usuarios))//lista de conectados 
-		})
+//SALAS----------------------------------------------------
+  
+  socket.emit("cambiarSala",{
+    anterior:null,
+    nueva:salaActual
+  })
+  
+  btnEntrar.addEventListener("click", () => {
+      const nuevaSala = salaSelect.value;
+      socket.emit("cambiarSala",{
+        anterior:salaActual,
+        nueva:nuevaSala});//unirse a la sala
+      salaActual=nuevaSala//cual salir cual entrar
+      mensajes.innerHTML = ""; // limpiamos mensajes al cambiar
+  });
