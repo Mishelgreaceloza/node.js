@@ -1,3 +1,117 @@
+<body>
+	<section id="chat">
+    <div class="salas">
+    <select id="sala">
+    <option value="general">General</option>
+    <option value="javascript">JavaScript</option>
+    <option value="ayuda">Ayuda</option>
+    </select>
+    <button id="entrar">Entrar</button>
+  </div>
+    <h2>sala1</h2>
+    <h3>usuarios conectados</h3>
+    <ul id="usuarioConetados"></ul>
+    <!--titulo chat-->
+    <h2 id="tituloChat"></h2>
+    <ul id="mensaje"></ul>
+    <p id="escribiendo" style="font-style: italic; color: gray;"></p>
+		<!--formulario-->
+    <form id="formulario">
+			<input type="text" name="message" id="input" placeholder="pon un mensaje " autocomplete="off"/>
+			<button  type=submit>enviar </button>
+
+		</form>
+	</section>
+
+
+<script type="module">
+  import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+
+  const socket = io();
+  const form=document.getElementById("formulario")
+  const input=document.getElementById("input")
+  const mensajes=document.getElementById("mensaje")
+  const userConectados=document.getElementById("usuarioConetados")
+  const salaSelect = document.getElementById("sala");
+  const btnEntrar = document.getElementById("entrar");
+  const escribiendoP=document.getElementById("escribiendo")
+  const tituloChat=document.getElementById("tituloChat")
+
+//USUARIO-------------------------------------- como se añade,donde se guarda 
+    let nombre=localStorage.getItem("apodo")// no se bore su nombre del usuario 
+    if(!nombre){
+      nombre=prompt("cual es tu nombre")
+    if(!nombre)nombre= "anonimo"//vacio sera anonimo
+      localStorage.setItem("apodo",nombre)//donde se guarda 
+    }
+
+    let salaActual = "general";
+    //socket.on("connect",()=>{
+    //socket.emit("nuevoUsuario",nombre)//socket.emit("unirseSala",salaActual)
+
+    socket.on("connect",()=>{
+      console.log("contado al sevidor");
+      socket.emit("nuevoUsuario",nombre)
+    
+  //SALAS----------------------------------------------------
+    
+    socket.emit("cambiarSala",{
+      anterior:null,
+      nueva:salaActual
+    })
+    
+    btnEntrar.addEventListener("click", () => {
+        const nuevaSala = salaSelect.value;
+        socket.emit("cambiarSala",{
+          anterior:salaActual,
+          nueva:nuevaSala});//unirse a la sala
+        salaActual=nuevaSala//cual salir cual entrar
+        mensajes.innerHTML = ""; // limpiamos mensajes al cambiar
+    tituloChat.textContent =`sala: ${salaActual}`
+    });
+    })
+//USUARIOS conectados ---------------------------------------
+  socket.on("listaUsuarios",(usuarios)=>{
+    userConectados.innerHTML=""
+    usuarios.forEach((u)=>{
+      
+      if (u === nombre) return;
+
+    const li = document.createElement("li");
+    li.textContent = u;
+    li.style.cursor = "pointer";
+    userConectados.appendChild(li)
+    })
+    })
+
+//ELEGIR USUARIO PRIV-----------------------------------
+    li.addEventListener("click", () => {
+      //chatPrivadoCon = u;
+
+      const salaPrivada=[nombre,u].sort().join("-")
+        
+      console.log("click en usuario",u);
+      console.log("cambio de sala",salaActual,"a",salaPrivada);
+      socket.emit("cambiarSala",{
+        anterior:salaActual,
+        nueva:salaPrivada
+      })
+
+      socket.emit("entrarPrivado",{
+        conmigo:nombre,
+        con:u
+      })
+      salaActual=salaPrivada
+      mensajes.innerHTML = "";
+      tituloChat.textContent = `Chat con ${u}`;
+    });
+
+    userConectados.appendChild(li);
+      
+    //par
+
+server:
+
 import express from "express"
 import path from "path"//para
 import {fileURLToPath} from "url"//para la url
@@ -48,91 +162,4 @@ io.on("connection",(socket)=>{
   			socket.emit("historial",historial[nueva])
   		}
   	});
-
-
-
-
-<body>
-	<section id="chat">
-    <div class="salas">
-    <select id="sala">
-    <option value="general">General</option>
-    <option value="javascript">JavaScript</option>
-    <option value="ayuda">Ayuda</option>
-    </select>
-    <button id="entrar">Entrar</button>
-  </div>
-    <h2>sala1</h2>
-    <h3>usuarios conectados</h3>
-    <ul id="usuarioConetados"></ul>
-    <!--titulo chat-->
-    <h2 id="tituloChat"></h2>
-    <ul id="mensaje"></ul>
-    <p id="escribiendo" style="font-style: italic; color: gray;"></p>
-		<!--formulario-->
-    <form id="formulario">
-			<input type="text" name="message" id="input" placeholder="pon un mensaje " autocomplete="off"/>
-			<button  type=submit>enviar </button>
-
-		</form>
-	</section>
-
-
-<script type="module">
-  import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
-
-  const socket = io();
-  const form=document.getElementById("formulario")
-  const input=document.getElementById("input")
-  const mensajes=document.getElementById("mensaje")
-  const userConectados=document.getElementById("usuarioConetados")
-  const salaSelect = document.getElementById("sala");
-  const btnEntrar = document.getElementById("entrar");
-  const escribiendoP=document.getElementById("escribiendo")
-  const tituloChat=document.getElementById("tituloChat")
-
-//USUARIO-------------------------------------- como se añade,donde se guarda 
-    let nombre=localStorage.getItem("apodo")// no se bore su nombre del usuario 
-    if(!nombre){
-      nombre=prompt("cual es tu nombre")
-    if(!nombre)nombre= "anonimo"//vacio sera anonimo
-      localStorage.setItem("apodo",nombre)//donde se guarda 
-    }
-
-    //let salaActual = "general";
-    //socket.on("connect",()=>{
-    //socket.emit("nuevoUsuario",nombre)//socket.emit("unirseSala",salaActual)
-
-    socket.on("connect",()=>{
-      console.log("contado al sevidor");
-      socket.emit("nuevoUsuario",nombre)
-    })
-//USUARIOS conectados ---------------------------------------
-  socket.on("listaUsuarios",(usuarios)=>{
-    userConectados.innerHTML=""
-    usuarios.forEach((u)=>{
-      
-      if (u === nombre) return;
-
-    const li = document.createElement("li");
-    li.textContent = u;
-    li.style.cursor = "pointer";
-    userConectados.appendChild(li)
-    })
-    })
-
-//SALAS----------------------------------------------------
-  
-  socket.emit("cambiarSala",{
-    anterior:null,
-    nueva:salaActual
-  })
-  
-  btnEntrar.addEventListener("click", () => {
-      const nuevaSala = salaSelect.value;
-      socket.emit("cambiarSala",{
-        anterior:salaActual,
-        nueva:nuevaSala});//unirse a la sala
-      salaActual=nuevaSala//cual salir cual entrar
-      mensajes.innerHTML = ""; // limpiamos mensajes al cambiar
-  });
+/*
