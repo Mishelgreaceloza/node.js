@@ -1,42 +1,31 @@
+/ENVIAR el mensaje 
+   form.addEventListener("submit",(e)=>{
+    e.preventDefault()//evita que la pagina se r0..0.
+    
+    socket.emit("dejoDeEscribir",{
+      sala:salaActual
+    })
 
-//ELEGIR USUARIO PRIV-----------------------------------
-    li.addEventListener("click", () => {
-      //chatPrivadoCon = u;
-
-      const salaPrivada=[nombre,u].sort().join("-")
-        
-      console.log("click en usuario",u);
-      console.log("cambio de sala",salaActual,"a",salaPrivada);
-      socket.emit("cambiarSala",{
-        anterior:salaActual,
-        nueva:salaPrivada
-      })
-
-      socket.emit("entrarPrivado",{
-        conmigo:nombre,
-        con:u
-      })
-      salaActual=salaPrivada
-      mensajes.innerHTML = "";
-      tituloChat.textContent = `Chat con ${u}`;
-    });
-
-    userConectados.appendChild(li);
-      
-    //para la los usuarios conectados 
-  })
-  })
-
-
-//entrar y salir de una SALA-----
-	socket.on("cambiarSala", ({anterior,nueva}) => {
-    	if(anterior) {socket.leave(anterior)}//LEAVE sale de la sala
-    	socket.join(nueva);//JOIN agrupa los usuarios a  la nueva sala 
-    	console.log(`Usuario ${usuarios[socket.id]} salio ${anterior} entró a ${nueva}`);
-  		
-  		//enviamos el historial al que entra 
-  		if(historial[nueva]){
-  			socket.emit("historial",historial[nueva])
-  		}
-  	});
+    if(!input.value.trim()) return
+      socket.emit("chat mensaje",{//laza la pelota al serv
+        mensaje:input.value,
+        sala:salaActual }) 
+      input.value="" //limpia el cuadro para next text
+    })//cuando apretemos el boton enviar
 /*
+
+server
+
+socket.on("chat mensaje", (msg) => {
+  		if(!msg?.mensaje|| !msg.sala) return//evita que caiga
+  		const ahora = new Date()
+  		const mensajeCompleto={
+  			sala:msg.sala,
+  			nombre:usuarios[socket.id],
+  			mensaje:msg.mensaje,
+  			hora: ahora.toLocaleTimeString([],{
+  				hour:"2-digit",
+  				minute:"2-digit"
+  			})
+  		}
+
