@@ -1,17 +1,61 @@
-		sala:msg.sala,
-  			nombre:usuarios[socket.id],
-  			mensaje:msg.mensaje,
-  			hora: ahora.toLocaleTimeString([],{
-  				hour:"2-digit",
-  				minute:"2-digit"
-  			})
-  		}
-  		console.log("mensaje es ", mensajeCompleto);
+//HISTORIAL-------------------------------------
+  socket.on("historial", (mensajesHistorial) => {
+  mensajes.innerHTML = ""; // limpiamos
 
-  		io.to(msg.sala).emit("chat mensaje",mensajeCompleto)
+  mensajesHistorial.forEach((msg) => {
+    const li = document.createElement("li");
+
+    li.className = msg.nombre === nombre ? "mio" : "otro";
+
+    li.innerHTML =
+      msg.nombre === nombre
+        ? `<span class="hora">${msg.hora}</span> ${msg.mensaje}`
+        : `<strong>${msg.nombre}</strong>
+           <span class="hora">${msg.hora}</span><br>
+           ${msg.mensaje}`;
+
+    mensajes.appendChild(li);
+  });
+    mensajes.scrollTop = mensajes.scrollHeight;
+  });
+
+//MENSAJE----------------------------------------
+
+        sala:msg.sala,
+        nombre:usuarios[socket.id],
+        mensaje:msg.mensaje,
+        hora: ahora.toLocaleTimeString([],{
+          hour:"2-digit",
+          minute:"2-digit"
+        })
+      }
+      console.log("mensaje es ", mensajeCompleto);
+
+      io.to(msg.sala).emit("chat mensaje",mensajeCompleto)
 
 })
-//texto
+        //ir chat privado
+          if(msg.nombre!==nombre){
+            const nombreSpan=document.createElement("span")
+            nombreSpan.classList.add("nombre-usuario")
+            nombreSpan.textContent=msg.nombre
+            nombreSpan.addEventListener("click",(){
+              const salaPrivada=[nombre,msg.nombre].sort().join("-")
+              socket.emit("cambiarSala",{
+                anterior:salaActual,
+                nueva:salaPrivada
+              })
+              socket.emit("entrarPrivado",{
+                conmigo:nombre,
+                con:msg.nombre
+              })
+              salaActual=salaPrivada
+              mensajes.innerHTML=""
+              tituloChat.textContent=`chat con ${msg.nombre}`
+            })
+          li.appendChild(nombreSpan)
+          }
+        //texto
           const texto=document.createElement("span")
           texto.classList.add("texto-mensaje")
           texto.textContent=msg.mensaje
@@ -32,6 +76,3 @@
             ${msg.mensaje}`;
           mensajes.appendChild(li);/*
       });
-
-
-
