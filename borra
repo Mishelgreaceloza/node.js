@@ -1,29 +1,20 @@
-//------HISTORIAL si la sala no existe la creamos 
-  		const historial={}
-			const LIMITE_MENSAJES =50
-			socket.emit("historial",(historial)=>{
-  		if(!historial[msg.sala]){
-  			historial[msg.sala]=[]
-  		}
-  		//guarmos el mensaje 
-  		historial[msg.sala].push(mensajeCompleto)
+//MOSTRAR EL MENSAJE-------
 
-  		//limitamos el historial 
-  		if (historial[msg.sala].length >LIMITE_MENSAJES) {
-  			historial[msg.sala].shift()
-  		}
+      //texto
+          socket.on("chat mensaje",(msg)=>{
 
-  		console.log("mensaje es",mensajeCompleto);
-    	io.to(msg.sala).emit("chat mensaje",  	mensajeCompleto)
-    	//io.to solo los que estan unido a la sala ;
-  	});
+          const li=document.createElement("li")
+          mensajes.appendChild(li)
+          
+          li.className = msg.nombre === nombre ? "mio" : "otro";
+          li.innerHTML = msg.nombre === nombre
+            ? `<span class="hora">${msg.hora}</span>${msg.mensaje}`
+            :`<strong>${msg.nombre}</strong>: </span class="hora"> ${msg.hora}</span><br>
+            ${msg.mensaje}`;
+          mensajes.scrollTop=mensajes.scrollHeight
+        })
 
-
-
-
-usuario :
-
-//HISTORIAL-------------------------------------
+      //HISTORIAL-------------------------------------
         socket.on("historial", (mensajesHistorial) => {
         mensajes.innerHTML = ""; // limpiamos
 
@@ -43,3 +34,5 @@ usuario :
         });
           mensajes.scrollTop = mensajes.scrollHeight;
         });
+
+/*
