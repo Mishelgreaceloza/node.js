@@ -1,4 +1,4 @@
-script type="module">
+<script type="module">
   import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
 
   const socket = io();
@@ -102,6 +102,7 @@ script type="module">
    //MOSTRAR EL MENSAJE-------
 
       //texto
+          socket.off("chat mensaje");
           socket.on("chat mensaje",(msg)=>{
 
           const li=document.createElement("li")
