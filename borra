@@ -139,6 +139,39 @@
           mensajes.scrollTop = mensajes.scrollHeight;
         });
 
+         
+      //escribiendo.....
+      let estaEscribiendo=false
+      let timeoutEscribiendo
+
+      input.addEventListener("input",()=>{
+        if(!estaEscribiendo){
+          estaEscribiendo=true
+          socket.emit("escribiendo",{
+            sala:salaActual
+          })
+        }
+        clearTimeout(timeoutEscribiendo);
+
+        timeoutEscribiendo=setTimeout(()=>{
+          estaEscribiendo=false
+          socket.emit("dejoDeEscribir",{
+            sala:salaActual
+          })
+        },1000);
+      })  
+
+      socket.on("escribiendo", (msg) => {
+      if (msg.nombre !== nombre) {
+        escribiendoP.textContent = `${msg.nombre} está escribiendo...`;
+      }
+    });
+
+    socket.on("dejoDeEscribir", () => {
+      escribiendoP.textContent = "";
+    });
+
+
 
 import express from "express"
 import path from "path"//para
@@ -207,7 +240,7 @@ io.on("connection",(socket)=>{
   		}
   	//	console.log("mensaje es ", mensajeCompleto);
 
-  		io.to(msg.sala).emit("chat mensaje",mensajeCompleto)
+  		//io.to(msg.sala).emit("chat mensaje",mensajeCompleto)
 
 //------HISTORIAL si la sala no existe la creamos 
 
@@ -226,3 +259,21 @@ io.on("connection",(socket)=>{
     	io.to(msg.sala).emit("chat mensaje",  	mensajeCompleto)
     	//io.to solo los que estan unido a la sala ;
  });
+	
+ //---------escribiendo..
+
+  	socket.on("escribiendo", ({ sala }) => {
+  	socket.to(sala).emit("escribiendo", { nombre:usuarios[socket.id]});
+	});
+
+	socket.on("dejoDeEscribir", ({ sala }) => {
+  	socket.to(sala).emit("dejoDeEscribir");
+	});
+
+
+//cuando se DESCONECTA-----
+	socket.on("disconnect",()=>{
+		console.log("usuario salio",usuarios[socket.id])
+		delete usuarios[socket.id];
+		io.emit("listaUsuarios",Object.values(usuarios))
+	})//cuando el usuario se desconcta 
