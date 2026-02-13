@@ -3,7 +3,7 @@
 
       const salaPrivada=[nombre,u].sort().join("-")
         
-      console.log("click en usuario",u);
+      console.log("click en usuario",u);  
       console.log("cambio de sala",salaActual,"a",salaPrivada);
       socket.emit("cambiarSala",{
         anterior:salaActual,
