@@ -130,7 +130,8 @@
             msg.nombre === nombre
               ? `<span class="hora">${msg.hora}</span> ${msg.mensaje}`
               : `<strong>${msg.nombre}</strong>
-                 <span class="hora">${msg.hora}</span><br>
+                 <span class="hora">$
+                 {msg.hora}</span><br>
                  ${msg.mensaje}`;
 
           mensajes.appendChild(li);
@@ -204,7 +205,7 @@ io.on("connection",(socket)=>{
   				minute:"2-digit"
   			})
   		}
-  		console.log("mensaje es ", mensajeCompleto);
+  	//	console.log("mensaje es ", mensajeCompleto);
 
   		io.to(msg.sala).emit("chat mensaje",mensajeCompleto)
 
