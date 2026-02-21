@@ -38,8 +38,8 @@ import {mostrarMensaje}from "./vistas.js"
 
     tituloChat.textContent="sala general"
     }else{
-      vistaGrupos.style.display="block"
-      vistaChat.style.display="none"
+      //vistaGrupos.style.display="block"
+      //vistaChat.style.display="none"
     }
     
   //SALAS----------------------------------------------------
@@ -70,8 +70,7 @@ import {mostrarMensaje}from "./vistas.js"
     li.textContent = u;
     li.style.cursor = "pointer";
     userConectados.appendChild(li)
-    //})
-    //})
+   
 
 //ELEGIR USUARIO PRIV-----------------------------------
     li.addEventListener("click", () => {
@@ -122,15 +121,6 @@ import {mostrarMensaje}from "./vistas.js"
 
           //----vistas------
             mostrarMensaje(mensajes,msg,nombre)
-          /*const li=document.createElement("li")
-       
-          li.className = msg.nombre === nombre ? "mio" : "otro";
-          li.innerHTML = msg.nombre === nombre
-            ? `<span class="hora">${msg.hora}</span>${msg.mensaje}`
-            :`<strong class="usuario" data-nombre="${msg.nombre}">${msg.nombre}</strong>: </span class="hora"> ${msg.hora}</span><br>
-            ${msg.mensaje}`;
-              mensajes.appendChild(li)  
-          mensajes.scrollTop=mensajes.scrollHeight*/
         })
 
       //ususario a privadao 
