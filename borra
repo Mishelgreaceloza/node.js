@@ -216,4 +216,25 @@ export function mostarUsuarios(listaElemento,usuarios,nombreActual,alClickUsuari
   })
 }
 
+y wn mi servidor es 
+
+//usuario se CONECTA----
+	socket.on("nuevoUsuario",(nombre)=>{
+			usuarios[socket.id]=nombre//es donde el usuario y su id se conectan 
+			console.log("usuarios conectados",usuarios);
+			io.emit("listaUsuarios",Object.values(usuarios))//lista de conectados 
+		})
+
+	//entrar y salir de una SALA-----
+	socket.on("cambiarSala", ({anterior,nueva}) => {
+    	if(anterior) {socket.leave(anterior)}//LEAVE sale de la sala
+    	socket.join(nueva);//JOIN agrupa los usuarios a  la nueva sala 
+    	console.log(`Usuario ${usuarios[socket.id]} salio ${anterior} entró a ${nueva}`);
+  		
+  		//enviamos el historial al que entra o0
+  		if(historial[nueva]){
+  			socket.emit("historial",historial[nueva])
+  		}
+  	});
+
   
