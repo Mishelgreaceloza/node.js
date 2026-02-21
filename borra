@@ -1,5 +1,5 @@
 import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
-import {mostrarMensaje,mostrarUsusarios}from "./vistas.js"
+import {mostrarMensaje,mostrarUsuarios}from "./vistas.js"
   const socket = io();
   const form=document.getElementById("formulario")
   const input=document.getElementById("input")
@@ -61,19 +61,11 @@ import {mostrarMensaje,mostrarUsusarios}from "./vistas.js"
  
 //USUARIOS conectados  mostrar ---------------------------------------
   socket.on("listaUsuarios",(usuarios)=>{
-
-    /*userConectados.innerHTML=""
-    usuarios.forEach((u)=>{
-      
-      if (u === nombre) return;
-
-    const li = document.createElement("li");
-    li.textContent = u;
-    li.style.cursor = "pointer";
-    userConectados.appendChild(li)*/
-   mostrarUsusarios{
+    
+   mostrarUsuarios(
     userConectados,usuarios,nombre,(u)=>{
 
+//ELEGIR USUARIO PRIV-----------------------------------
       const salaPrivada=[nombre,u].sort().join("-")
         
       console.log("click en usuario",u);
@@ -86,22 +78,9 @@ import {mostrarMensaje,mostrarUsusarios}from "./vistas.js"
       salaActual=salaPrivada
       mensajes.innerHTML = "";
       tituloChat.textContent = `Chat con ${u}`;
-
     }
-   }
-
-//ELEGIR USUARIO PRIV-----------------------------------
-    /*li.addEventListener("click", () => {
-      //chatPrivadoCon = u;
-
-      
-    });*/
-
-    //userConectados.appendChild(li);
-      
-    //para la los usuarios conectados 
+   )
   })
-  //})
 
 //ENVIAR el mensaje ----
    form.addEventListener("submit",(e)=>{
@@ -199,42 +178,5 @@ import {mostrarMensaje,mostrarUsusarios}from "./vistas.js"
       escribiendoP.textContent = "";
     });
 
-y en vistas 
-
-//USUARIOS CONECTADOS-------
-export function mostarUsuarios(listaElemento,usuarios,nombreActual,alClickUsuario){
-  listaElemento.innerHTML=""
-  usuarios.forEach((u)=>{
-    if(u===nombreActual)return
-    const li=document.createElement("li")
-    li.textContent=u
-    li.style.cursor="pointer"
-    li.addEventListener("click",()=>{
-      alClickUsuario(u)
-    })
-    listaElemento.appendChild(li)
-  })
-}
-
-y wn mi servidor es 
-
-//usuario se CONECTA----
-	socket.on("nuevoUsuario",(nombre)=>{
-			usuarios[socket.id]=nombre//es donde el usuario y su id se conectan 
-			console.log("usuarios conectados",usuarios);
-			io.emit("listaUsuarios",Object.values(usuarios))//lista de conectados 
-		})
-
-	//entrar y salir de una SALA-----
-	socket.on("cambiarSala", ({anterior,nueva}) => {
-    	if(anterior) {socket.leave(anterior)}//LEAVE sale de la sala
-    	socket.join(nueva);//JOIN agrupa los usuarios a  la nueva sala 
-    	console.log(`Usuario ${usuarios[socket.id]} salio ${anterior} entró a ${nueva}`);
-  		
-  		//enviamos el historial al que entra o0
-  		if(historial[nueva]){
-  			socket.emit("historial",historial[nueva])
-  		}
-  	});
 
   
