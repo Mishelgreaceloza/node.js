@@ -1,7 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>mi chat</title>
+	
+<style>
+  #mensaje {
+    list-style: none;
+    padding: 10px;
+  }
+
+  #mensaje li {
+    margin: 6px 0;
+    padding: 8px 12px;
+    max-width: 70%;
+    border-radius: 10px;
+    word-wrap: break-word;
+  }
+
+  .mio {
+    background-color: #dcf8c6;
+    margin-left: auto;
+    text-align: right;
+  }
+
+  .otro {
+    background-color: #f1f0f0;
+    margin-right: auto;
+    text-align: left;
+  }
+  .hora{
+    font-size: 0.75em;
+    color: #666;
+    margin-left: 6px ;
+  }
+  .mensaje{
+    margin: 6px 0;
+    padding: 8px 12px;
+  }
+  </style>
+</head>
+<body>
+	<section id="chat">
+    <div class="salas">
+    <select id="sala">
+    <option value="general">General</option>
+    <option value="javascript">JavaScript</option>
+    <option value="ayuda">Ayuda</option>
+    </select>
+    <button id="entrar">Entrar</button>
+  </div>
+    <h3>usuarios conectados</h3>
+    <ul id="usuarioConetados"></ul>
+    <!--titulo chat-->
+    <h2 id="tituloChat"></h2>
+    <ul id="mensaje"></ul>
+    <p id="escribiendo" style="font-style: italic; color: gray;"></p>
+		<!--formulario-->
+    <form id="formulario">
+			<input type="text" name="message" id="input" placeholder="pon un mensaje " autocomplete="off"/>
+			<button  type=submit>enviar </button>
+
+		</form>
+	</section>
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="module" src="./js/app.js">
+</script>
+
+</body>
+
+
+</html>
+
+
+
+y en mi servidor es 
+
+
 
 import express from "express"
 import path from "path"//para
-import {fileURLToPath} from "url"//para la url
+import {fileURLToPath} from "url"//para la url 
 import {createServer}from "node:http"//crea servidores http
 import {Server} from "socket.io"//tiempo real
 
@@ -109,10 +190,13 @@ server.listen(port,()=>{
 	console.log("coriendo");
 })
 
-en app.js:
+
+
+y en app.js 
+
 
 import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
-import {mostrarMensaje,mostrarUsuarios,mostaraHistorial}from "./vistas.js"
+import {mostrarMensaje,mostrarUsuarios,mostraraHistorial}from "./vistas.js"
   const socket = io();
   const form=document.getElementById("formulario")
   const input=document.getElementById("input")
@@ -157,10 +241,10 @@ import {mostrarMensaje,mostrarUsuarios,mostaraHistorial}from "./vistas.js"
     
   //SALAS----------------------------------------------------
     
-    socket.emit("cambiarSala",{
+    /*socket.emit("cambiarSala",{
       anterior:null,
       nueva:salaActual
-    })
+    })*/
        })
     btnEntrar.addEventListener("click", () => {
         const nuevaSala = salaSelect.value;
@@ -240,7 +324,7 @@ import {mostrarMensaje,mostrarUsuarios,mostaraHistorial}from "./vistas.js"
         })
       //HISTORIAL-------------------------------------
         socket.on("historial", (mensajesHistorial) => {
-          mostrarHistorial("historial",(mensajes,mensajesHistorial,nombre)
+          mostrarHistorial(mensajes,mensajesHistorial,nombre)
  /*      mensajes.innerHTML = ""; // limpiamos
 
         mensajesHistorial.forEach((msg) => {
@@ -293,7 +377,7 @@ import {mostrarMensaje,mostrarUsuarios,mostaraHistorial}from "./vistas.js"
     });
 
 
-  y en vistas.js
+  y en vistas 
 
 
 //USUARIOS CONECTADOS-------
@@ -341,5 +425,5 @@ export function mostrarHistorial(listaElemento,mensajesHistorial,nombreActual){
 
           listaElemento.appendChild(li);
         });
-          listaElemento.scrollTop = mensajes.scrollHeight;
+          listaElemento.scrollTop = listaElemento.scrollHeight;
 }
