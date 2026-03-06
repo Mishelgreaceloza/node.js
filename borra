@@ -1,52 +1,8 @@
-</head>
-<body>
-  <section id="vistaGrupo">
-    <h2>selecciona una sala</h2>
-      <select id="sala">
-        <option value="general">general</option>
-        <option value="javascript">javascript</option>
-        <option value="ayuda">ayuda</option>
-        <button id=entrar>entrar</button>
-  </section>
-  
-	<section id="chat">
-   <!-- <div class="salas">
-    <select id="sala">
-    <option value="general">General</option>
-    <option value="javascript">JavaScript</option>
-    <option value="ayuda">Ayuda</option>
-    </select>
-    <button id="entrar">Entrar</button>
-  </div>-->
-    <h3>usuarios conectados</h3>
-    <ul id="usuarioConetados"></ul>
-    <!--titulo chat-->
-    <h2 id="tituloChat"></h2>
-    <ul id="mensaje"></ul>
-    <p id="escribiendo" style="font-style: italic; color: gray;"></p>
-		<!--formulario-->
-    <form id="formulario">
-			<input type="text" name="message" id="input" placeholder="pon un mensaje " autocomplete="off"/>
-			<button  type=submit>enviar </button>
-
-		</form>
-	</section>
-
-<script src="/socket.io/socket.io.js"></script>
-<script type="module" src="./js/app.js">
-</script>
-
-</body>
-
-</html>
-
-en mi app.js
-
 import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
 import {mostrarMensaje,mostrarUsuarios,mostrarHistorial,mostrarEscribiendo,limpiarEscribiendo}from "./vistas.js"
   const socket = io();
   const form=document.getElementById("formulario")
-  const input=document.getElementById("input")
+  const input=document.getElementById("input") 
   const mensajes=document.getElementById("mensaje")
   const userConectados=document.getElementById("usuarioConetados")
   const salaSelect = document.getElementById("sala");
@@ -209,3 +165,21 @@ import {mostrarMensaje,mostrarUsuarios,mostrarHistorial,mostrarEscribiendo,limpi
       limpiarEscribiendo(escribiendoP)
       //escribiendoP.textContent = "";
     });
+//cambio 
+
+  /*  btnEntrar.addEventListener("click", () => {
+  const nuevaSala = salaSelect.value
+
+  socket.emit("cambiarSala", {
+    anterior: salaActual,
+    nueva: nuevaSala
+  })
+
+  salaActual = nuevaSala
+
+  vistaGrupos.style.display = "none"
+  vistaChat.style.display = "block"
+
+  tituloChat.textContent = `Sala: ${salaActual}`
+  })*/
+  
