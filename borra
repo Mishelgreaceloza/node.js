@@ -41,3 +41,12 @@ gruposBtn.onclick=()=>{
   mostrarGrupos()
 
 }
+
+gruposBtn.onclick=()=>{
+
+  vistaChat.style.display="none"
+  vistaGrupos.style.display="block"
+
+  mostrarGrupos()
+
+}
