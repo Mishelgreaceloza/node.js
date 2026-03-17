@@ -1,4 +1,4 @@
-ya da ,cuando apreto el boton me lleva a otro lado pero no se ve mis grupos :(	
+
 <style>
   #mensaje {
     list-style: none;
@@ -81,16 +81,21 @@ ya da ,cuando apreto el boton me lleva a otro lado pero no se ve mis grupos :(
     <div id="homeBtn">home</div>
     <div id="perfilBtn">perfil</div>
   </div>
+  </section>
   <!--vistas grupos-->
   <section id="vistasGrupos"
     style="display: none ;">
     <h2>grupos</h2>
+    <select id="sala">
+      <option value="general">general</option>
+      <option value="javascript">javascript</option>
+      <option value="ayuda">ayuda</option>
+    </select>
     
   </section>
     
   
-		
-	</section>
+	
 
 <script src="/socket.io/socket.io.js"></script>
 <script type="module" src="./js/app.js">
@@ -100,7 +105,7 @@ ya da ,cuando apreto el boton me lleva a otro lado pero no se ve mis grupos :(
 
 
 </html>
-
+en mi js que es app.js 
 
 import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
 import {mostrarMensaje,mostrarUsuarios,mostrarHistorial,mostrarEscribiendo,limpiarEscribiendo}from "./vistas.js"
@@ -116,6 +121,8 @@ import {mostrarMensaje,mostrarUsuarios,mostrarHistorial,mostrarEscribiendo,limpi
   const vistaGrupos=document.getElementById("vistasGrupos")
   const vistaChat=document.getElementById("chat")
   const gruposBtn=document.getElementById("grupoBtn")
+  const listade =document.getElementById("vistasGrupos")
+  
 //USUARIO-------------------------------------- como se añade,donde se guarda 
     let nombre=localStorage.getItem("apodo")// no se bore su nombre del usuario 
     let esNuevo=false
@@ -277,3 +284,4 @@ gruposBtn.onclick= () =>{
   vistaChat.style.display="none"
   vistaGrupos.style.display="block"
 }
+
