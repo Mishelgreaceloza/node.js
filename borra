@@ -1,57 +1,38 @@
-//===========================================VISTAS DE GRUPOS=============
-//-----------AÑADIR GRUPOS----------
-let grupos=["javascript","ayuda","general"]
+"mongo" no se reconoce como un comando interno o externo,
+programa o archivo por lotes ejecutable.
 
+C:\Users\greace>mongod --dbpath ./data
+{"t":{"$date":"2026-03-27T19:30:36.545-04:00"},"s":"I",  "c":"-",        "id":8991200, "ctx":"thread1","msg":"Shuffling initializers","attr":{"seed":649841095}}
+{"t":{"$date":"2026-03-27T19:30:36.590-04:00"},"s":"I",  "c":"CONTROL",  "id":97374,   "ctx":"thread1","msg":"Automatically disabling TLS 1.0 and TLS 1.1, to force-enable TLS 1.1 specify --sslDisabledProtocols 'TLS1_0'; to force-enable TLS 1.0 specify --sslDisabledProtocols 'none'"}
+{"t":{"$date":"2026-03-27T19:30:37.075-04:00"},"s":"I",  "c":"NETWORK",  "id":4915701, "ctx":"thread1","msg":"Initialized wire specification","attr":{"spec":{"incomingExternalClient":{"minWireVersion":0,"maxWireVersion":27},"incomingInternalClient":{"minWireVersion":0,"maxWireVersion":27},"outgoing":{"minWireVersion":6,"maxWireVersion":27},"isInternalClient":true}}}
+{"t":{"$date":"2026-03-27T19:30:37.078-04:00"},"s":"I",  "c":"CONTROL",  "id":5945603, "ctx":"thread1","msg":"Multi threading initialized"}
+{"t":{"$date":"2026-03-27T19:30:37.079-04:00"},"s":"I",  "c":"CONTROL",  "id":4615611, "ctx":"initandlisten","msg":"MongoDB starting","attr":{"pid":7512,"port":27017,"dbPath":"./data","architecture":"64-bit","host":"DESKTOP-1JQ9KQ6"}}
+{"t":{"$date":"2026-03-27T19:30:37.080-04:00"},"s":"I",  "c":"CONTROL",  "id":23398,   "ctx":"initandlisten","msg":"Target operating system minimum version","attr":{"targetMinOS":"Windows 7/Windows Server 2008 R2"}}
+{"t":{"$date":"2026-03-27T19:30:37.081-04:00"},"s":"I",  "c":"CONTROL",  "id":23403,   "ctx":"initandlisten","msg":"Build Info","attr":{"buildInfo":{"version":"8.2.6","gitVersion":"5d25c835745d06f712320b6cdae9d50b7b43663e","modules":[],"allocator":"tcmalloc-gperf","environment":{"distmod":"windows"}}}}
+{"t":{"$date":"2026-03-27T19:30:37.082-04:00"},"s":"I",  "c":"CONTROL",  "id":51765,   "ctx":"initandlisten","msg":"Operating System","attr":{"os":{"name":"Microsoft Windows Workstation (build 19045)","version":"10.0 (build 19045)"}}}
+{"t":{"$date":"2026-03-27T19:30:37.082-04:00"},"s":"I",  "c":"CONTROL",  "id":21951,   "ctx":"initandlisten","msg":"Options set by command line","attr":{"options":{"storage":{"dbPath":"./data"}}}}
+{"t":{"$date":"2026-03-27T19:30:37.085-04:00"},"s":"W",  "c":"NETWORK",  "id":11621101,"ctx":"initandlisten","msg":"Overriding max connections to honor `capMemoryConsumptionForPreAuthBuffers` settings","attr":{"limit":25725}}
+{"t":{"$date":"2026-03-27T19:30:37.087-04:00"},"s":"I",  "c":"NETWORK",  "id":4648601, "ctx":"initandlisten","msg":"Implicit TCP FastOpen unavailable. If TCP FastOpen is required, set at least one of the related parameters","attr":{"relatedParameters":["tcpFastOpenServer","tcpFastOpenClient","tcpFastOpenQueueSize"]}}
+{"t":{"$date":"2026-03-27T19:30:37.092-04:00"},"s":"E",  "c":"CONTROL",  "id":20557,   "ctx":"initandlisten","msg":"DBException in initAndListen, terminating","attr":{"error":"NonExistentPath: Data directory ./data not found. Create the missing directory or specify another path using (1) the --dbpath command line option, or (2) by adding the 'storage.dbPath' option in the configuration file."}}
+{"t":{"$date":"2026-03-27T19:30:37.093-04:00"},"s":"I",  "c":"REPL",     "id":4784900, "ctx":"initandlisten","msg":"Stepping down the ReplicationCoordinator for shutdown","attr":{"waitTimeMillis":15000}}
+{"t":{"$date":"2026-03-27T19:30:37.093-04:00"},"s":"I",  "c":"REPL",     "id":4794602, "ctx":"initandlisten","msg":"Attempting to enter quiesce mode"}
+{"t":{"$date":"2026-03-27T19:30:37.095-04:00"},"s":"I",  "c":"-",        "id":6371601, "ctx":"initandlisten","msg":"Shutting down the FLE Crud thread pool"}
+{"t":{"$date":"2026-03-27T19:30:37.096-04:00"},"s":"I",  "c":"COMMAND",  "id":4784901, "ctx":"initandlisten","msg":"Shutting down the MirrorMaestro"}
+{"t":{"$date":"2026-03-27T19:30:37.097-04:00"},"s":"I",  "c":"SHARDING", "id":4784902, "ctx":"initandlisten","msg":"Shutting down the WaitForMajorityService"}
+{"t":{"$date":"2026-03-27T19:30:37.098-04:00"},"s":"I",  "c":"NETWORK",  "id":8314100, "ctx":"initandlisten","msg":"Shutdown: Closing listener sockets"}
+{"t":{"$date":"2026-03-27T19:30:37.107-04:00"},"s":"I",  "c":"NETWORK",  "id":4784905, "ctx":"initandlisten","msg":"Shutting down the global connection pool"}
+{"t":{"$date":"2026-03-27T19:30:37.109-04:00"},"s":"I",  "c":"CONTROL",  "id":4784906, "ctx":"initandlisten","msg":"Shutting down the FlowControlTicketholder"}
+{"t":{"$date":"2026-03-27T19:30:37.110-04:00"},"s":"I",  "c":"-",        "id":20520,   "ctx":"initandlisten","msg":"Stopping further Flow Control ticket acquisitions."}
+{"t":{"$date":"2026-03-27T19:30:37.112-04:00"},"s":"I",  "c":"NETWORK",  "id":4784918, "ctx":"initandlisten","msg":"Shutting down the ReplicaSetMonitor"}
+{"t":{"$date":"2026-03-27T19:30:37.113-04:00"},"s":"I",  "c":"SHARDING", "id":9439300, "ctx":"initandlisten","msg":"Shutting down the filtering metadata cache"}
+{"t":{"$date":"2026-03-27T19:30:37.114-04:00"},"s":"I",  "c":"NETWORK",  "id":20562,   "ctx":"initandlisten","msg":"Shutdown: Closing open transport sessions"}
+{"t":{"$date":"2026-03-27T19:30:37.119-04:00"},"s":"I",  "c":"NETWORK",  "id":4784923, "ctx":"initandlisten","msg":"Shutting down the ASIO transport SessionManager"}
+{"t":{"$date":"2026-03-27T19:30:37.123-04:00"},"s":"I",  "c":"CONTROL",  "id":4784928, "ctx":"initandlisten","msg":"Shutting down the TTL monitor"}
+{"t":{"$date":"2026-03-27T19:30:37.125-04:00"},"s":"I",  "c":"CONTROL",  "id":4784929, "ctx":"initandlisten","msg":"Acquiring the global lock for shutdown"}
+{"t":{"$date":"2026-03-27T19:30:37.126-04:00"},"s":"I",  "c":"-",        "id":4784931, "ctx":"initandlisten","msg":"Dropping the scope cache for shutdown"}
+{"t":{"$date":"2026-03-27T19:30:37.128-04:00"},"s":"I",  "c":"-",        "id":10175800,"ctx":"initandlisten","msg":"Shutting down the standalone executor"}
+{"t":{"$date":"2026-03-27T19:30:37.129-04:00"},"s":"I",  "c":"CONTROL",  "id":20565,   "ctx":"initandlisten","msg":"Now exiting"}
+{"t":{"$date":"2026-03-27T19:30:37.134-04:00"},"s":"I",  "c":"CONTROL",  "id":8423404, "ctx":"initandlisten","msg":"mongod shutdown complete","attr":{"Summary of time elapsed":{"Statistics":{"enterTerminalShutdownMillis":0,"stepDownReplCoordMillis":1,"quiesceModeMillis":0,"stopFLECrudMillis":2,"shutDownMirrorMaestroMillis":1,"shutDownWaitForMajorityServiceMillis":1,"shutDownGlobalConnectionPoolMillis":0,"shutDownSearchTaskExecutorsMillis":0,"shutDownFlowControlTicketHolderMillis":3,"shutDownReplicaSetMonitorMillis":2,"shutDownTransportLayerMillis":6,"shutDownTTLMonitorMillis":4,"shutDownExpiredDocumentRemoverMillis":0,"shutDownOtelMetricsMillis":0,"shutDownFTDCMillis":0,"shutDownReplicaSetNodeExecutorMillis":2,"shutDownOCSPMillis":0,"shutdownTaskTotalMillis":38}}}}
+{"t":{"$date":"2026-03-27T19:30:37.136-04:00"},"s":"I",  "c":"CONTROL",  "id":23138,   "ctx":"initandlisten","msg":"Shutting down","attr":{"exitCode":100}}
 
-function mostrarGrupos(){
-
-  listade.innerHTML = ""
-
-  grupos.forEach(grupo=>{
-
-    const div = document.createElement("div")
-
-    div.textContent = grupo
-    div.style.padding = "10px"
-    div.style.borderBottom = "1px solid #ccc"
-    div.style.cursor = "pointer"
-
-    div.onclick = ()=>{
-
-      socket.emit("cambiarSala",{
-        anterior:salaActual,
-        nueva:grupo
-      })
-
-      salaActual = grupo
-      mensajes.innerHTML=""
-      tituloChat.textContent = `sala: ${grupo}`
-
-      vistaGrupos.style.display="none"
-      vistaChat.style.display="block"
-
-    }
-
-    listade.appendChild(div)
-
-  })
-
-}
-
-
-gruposBtn.onclick=()=>{
-
-  vistaChat.style.display="none"
-  vistaGrupos.style.display="block"
-
-  mostrarGrupos()
-
-  document.getElementById("crearGrupo").onclick=()=>{
-  const nombreGrupo=prompt("nombre del grupo")
-  if(!nombreGrupo) return
-  grupos.push(nombreGrupo)
-mostrarGrupos()
-}
-
-}
 
