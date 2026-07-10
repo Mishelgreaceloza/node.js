@@ -1,0 +1,3 @@
+----EMITTERS-----
+son objetos que emiten eventos nombrados y llaman a funciones especificas cuantos ocurren 
+son intancias de la clase EventEmitter
