@@ -1,4 +1,14 @@
 ===================EXPRESS=====================
+
+let yo={
+    "titulo":"greace",
+    "edad":21,
+    "colores":["rosa","azul"]
+}
+let informaciontexto=JSON.stringify(yo)//lo convertimos en json ya no es un obejto
+
+let informacionobjeto=JSON.parse(informaciontexto)
+
 para poder mostrar un "hola"
 		import express from "express"//lo importamos
 		const app=express()//lo iniciamos 
