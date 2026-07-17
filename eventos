@@ -1,3 +1,29 @@
 ----EMITTERS-----
 son objetos que emiten eventos nombrados y llaman a funciones especificas cuantos ocurren 
 son intancias de la clase EventEmitter
+----como se usa?----
+imaginemmos que tenemos nuestros datos en js
+    archivo 1 emittir.js en aca iniciamos para que se pueda emitir 
+    const EventEmitter = require("events");
+    
+    const emitter = new EventEmitter();//crea un capaz de emitir 
+    module.exports = emitter;
+archivo 2 json.js en aca esta el cotenido 
+    const persona = {
+    nombre: "Juan",
+    edad: 20
+  };
+
+  module.exports = persona;
+archivo 3 app.js es donde vamos sacar los datos 
+    const emitter = require("./emittir");//donde nos el permiso extraer 
+    const persona = require("./json");//el atchivo de donde sacamo los datos
+    
+    console.log(persona.nombre); // Juan
+    
+    emitter.on("saludo", () => {
+        console.log("Hola");
+    });//emitter.on es el que escucha 
+    
+    emitter.emit("saludo");// emitter.emit es el que ejecuta  
+
