@@ -2,7 +2,7 @@
 son objetos que emiten eventos nombrados y llaman a funciones especificas cuantos ocurren 
 son intancias de la clase EventEmitter
 ----como se usa?----
-imaginemmos que tenemos nuestros datos en js
+es para pasar datos de archuvoa otro imaginemmos que tenemos nuestros datos en js
     archivo 1 emittir.js en aca iniciamos para que se pueda emitir 
     const EventEmitter = require("events");
     
