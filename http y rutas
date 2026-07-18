@@ -1,0 +1,23 @@
+---------creando primer servidor ------------
+const http =require('http')//requerimos el http 
+
+const servidor=http.createServer((req,res)=>{
+    console.log("nueva solicitiud")
+    res.end("hola")//envia la conexion y la termina
+
+})
+
+//puerto
+servidor.listen(3001,()=>{
+    console.log("el servidor ya escucha ")//empiza a escuchar el puerto 3001
+})
+------partes de una url-----
+sub dominio=>  permite organizar y separar la informacion 
+dominio =>el nombre es lo unico no hay mas 
+dominio nivel superior tld =>es el org 
+parh=>hay tipos 
+parametros query =>son parametros contenido dinamico  son ?q=curso 
+    si quermos varios parametros lo separamos con &
+--------------routing----------
+  criterios el metodo de la solicitud http (get,pos.put)
+  el path es ell camino 
